@@ -1,0 +1,239 @@
+{
+  "pluginAlias": "TuyaWebPlatform",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Homebridge plugin for devices using the Tuya Web API.",
+  "footerDisplay": "If you have any suggestions, please open an issue on [GitHub](https://github.com/milo526/homebridge-tuya-web/issues).",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "required": true,
+        "default": "TuyaWebPlatform",
+        "description": "You shouldn't need to change this."
+      },
+      "options": {
+        "title": "",
+        "type": "object",
+        "required": true,
+        "properties": {
+          "username": {
+            "title": "Username",
+            "type": "string",
+            "required": true
+          },
+          "password": {
+            "title": "Password",
+            "type": "string",
+            "required": true
+          },
+          "countryCode": {
+            "title": "Country Code",
+            "type": "string",
+            "description": "Your account country code, e.g. 1 for USA, 86 for China, 44 for UK.",
+            "required": true
+          },
+          "platform": {
+            "title": "Platform",
+            "type": "string",
+            "default": "form",
+            "oneOf": [
+              {
+                "title": "Tuya Smart",
+                "enum": [
+                  "tuya"
+                ]
+              },
+              {
+                "title": "Smart Life",
+                "enum": [
+                  "smart_life"
+                ]
+              },
+              {
+                "title": "Jinvoo Smart",
+                "enum": [
+                  "jinvoo_smart"
+                ]
+              }
+            ],
+            "required": true
+          },
+          "pollingInterval": {
+            "title": "Polling Interval",
+            "type": "number",
+            "description": "The frequency in seconds that the plugin polls the cloud to get device updates. Can be left empty to only fetch on request. Must be 300 or larger",
+            "required": false,
+            "minimum": 300
+          }
+        }
+      },
+      "defaults": {
+        "title": "Overwrite devices",
+        "description": "Device types can be overwritten if devices are wrongfully exposed i.e. an outlet that is exposed as a switch.",
+        "type": "array",
+        "items": {
+          "title": "Overwrite",
+          "type": "object",
+          "properties": {
+            "id": {
+              "title": "Device name or id",
+              "type": "string",
+              "description": "Can be found in your platform app (device info -> virtual ID) and is exposed during plugin boot (use the Tuya ID)",
+              "required": true
+            },
+            "device_type": {
+              "title": "Device type",
+              "type": "string",
+              "default": "form",
+              "description": "The type that you want the device to be exposed as",
+              "oneOf": [
+                {
+                  "title": "Dimmer",
+                  "enum": [
+                    "dimmer"
+                  ]
+                },
+                {
+                  "title": "Fan",
+                  "enum": [
+                    "fan"
+                  ]
+                },
+                {
+                  "title": "Light",
+                  "enum": [
+                    "light"
+                  ]
+                },
+                {
+                  "title": "Outlet",
+                  "enum": [
+                    "outlet"
+                  ]
+                },
+                {
+                  "title": "Scene",
+                  "enum": [
+                    "scene"
+                  ]
+                },
+                {
+                  "title": "Switch",
+                  "enum": [
+                    "switch"
+                  ]
+                }
+              ],
+              "required": true
+            }
+          }
+        }
+      },
+      "scenes": {
+        "title": "Expose Tuya scenes to Homekit",
+        "type": "boolean",
+        "required": true,
+        "default": false
+      },
+      "scenesWhitelist": {
+        "title": "Tuya scenes to expose to Homekit",
+        "type": "array",
+        "required": false,
+        "items": {
+          "title": "Scene name or id",
+          "type": "string",
+          "required": true
+        }
+      },
+      "hiddenAccessories": {
+        "title": "Accessories to hide from Homekit",
+        "type": "array",
+        "required": false,
+        "items": {
+          "title": "Accessory name or id",
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  },
+  "layout": [
+    {
+      "type": "flex",
+      "flex-flow": "row wrap",
+      "items": [
+        "options.username",
+        {
+          "key": "options.password",
+          "type": "password"
+        }
+      ]
+    },
+    "options.countryCode",
+    "options.platform",
+    {
+      "type": "fieldset",
+      "title": "Optional Settings",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        "options.pollingInterval"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "title": "Advanced",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        {
+          "title": "Device overwrite",
+          "type": "array",
+          "items": [
+            {
+              "key": "defaults[].id"
+            },
+            {
+              "key": "defaults[].device_type"
+            }
+          ]
+        },
+        {
+          "title": "Hidden accessories",
+          "type": "array",
+          "description": "Enter the identifiers of accessories that you wish not to expose to HomeKit.",
+          "items": [
+            {
+              "key": "hiddenAccessories[]",
+              "required": true
+            }
+          ]
+        },
+        {
+          "type": "fieldset",
+          "title": "Scenes",
+          "items": [
+            "scenes",
+            {
+              "title": "Whitelisted scene",
+              "type": "array",
+              "description": "Enter the scenes that you wish to expose to Homekit, when left empty <b>all</b> scenes will be exposed.",
+              "condition": {
+                "functionBody": "return (model.scenes)"
+              },
+              "items": [
+                {
+                  "key": "scenesWhitelist[]",
+                  "required": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
