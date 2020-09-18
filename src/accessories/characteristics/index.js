@@ -1,0 +1,11 @@
+export * from './active';
+export * from './brightness';
+export * from './colorTemperature';
+export * from './cover.currentPosition';
+export * from './cover.targetPosition';
+export * from './cover.positionState';
+export * from './hue';
+export * from './on';
+export * from './rotationSpeed';
+export * from './saturation';
+export const COLOR_MODES = ['color', 'colour'];
